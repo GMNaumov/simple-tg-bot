@@ -1,6 +1,7 @@
 package com.ngm.service.impl;
 
 import java.io.StringReader;
+import java.util.Optional;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -24,16 +25,24 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public String getUSDExchangeRate() throws ServiceException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUSDExchangeRate'");
+        var xmlOptional = cbrClient.getCurrencyRatesXml();
+
+        String xml = xmlOptional.orElseThrow(
+                () -> new ServiceException("Не удалось получить XML"));
+
+        return extractCurrencyValueFromXML(xml, USD_XPATH);
     }
 
     @Override
     public String getEUREchangeRate() throws ServiceException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getEUREchangeRate'");
+        var xmlOptional = cbrClient.getCurrencyRatesXml();
+
+        String xml = xmlOptional.orElseThrow(
+                () -> new ServiceException("Не удалось получить XML"));
+        
+        return extractCurrencyValueFromXML(xml, EUR_XPATH);
     }
-    
+
     private static String extractCurrencyValueFromXML(String xml, String xpathExpression) throws ServiceException {
         var source = new InputSource(new StringReader(xml));
 
